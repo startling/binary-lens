@@ -29,7 +29,7 @@ byteAt :: (Integral b, Bits b) => Int -> Simple Lens b Word8
 byteAt i fn b = backward <$> fn forward where
   offset = bitSize b - (i + 1) * 8
   forward = fromIntegral . (.&.) 255 $ b `shiftR` offset
-  backward w8 = b `xor` shiftL 255 offset .|. shiftL (fromIntegral w8) offset
+  backward w8 = b .&. shiftL 255 (offset - 8) .|. shiftL (fromIntegral w8) offset
 -- I showed this to edwardk and he stuck it in lens;
 -- it's due to be released in lens-3.8.0.
 
