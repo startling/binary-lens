@@ -29,7 +29,8 @@ byteAt :: (Integral b, Bits b) => Int -> Simple Lens b Word8
 byteAt i fn b = backward <$> fn forward where
   offset = bitSize b - (i + 1) * 8
   forward = fromIntegral . (.&.) 255 $ b `shiftR` offset
-  backward w8 = b .&. shiftL 255 (offset - 8) .|. shiftL (fromIntegral w8) offset
+  backward w8 = b .&. complement (255 `shiftL` offset) 
+    .|. (fromIntegral w8 `shiftL` offset)
 -- I showed this to edwardk and he stuck it in lens;
 -- it's due to be released in lens-3.8.0.
 
@@ -53,7 +54,7 @@ word32le = byte +> byteAt 0 |+| byte +> byteAt 1
 -- | Interact with a 'Word32' encoded big-endian.
 word32be :: Serialize s => s Word32
 word32be = byte +> byteAt 3 |+| byte +> byteAt 2
-  |+| byte +> byteAt 2 |+| byte +> byteAt 1
+  |+| byte +> byteAt 1 |+| byte +> byteAt 0
 
 -- | Interact with a 'Word64' encoded little-endian.
 word64le :: Serialize s => s Word64
