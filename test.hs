@@ -28,7 +28,7 @@ testPutGet action size = do
     . property $ (B.pack <$> vectorOf size arbitrary) <&>
       \bs -> (serialize action <$> deserialize action bs) == Just bs
 
--- | Check that something parses to the 
+-- | Check that something parses to the given thing.
 shouldParseTo :: (?action :: Get b, Eq b, Show b, Default b)
   => ByteString -> b -> Expectation
 a `shouldParseTo` b = deserialize ?action a `shouldBe` Just b
