@@ -12,8 +12,8 @@ newtype Put r = Put (r -> ByteString)
 
 instance Serialize Put where
   bytes i = Put $ B.take i
-  Put b +> l= Put $ b . view l
-  Put a |+| Put b = Put $ \bs -> a bs `B.append` b bs
+  Put b %% l= Put $ b . view l
+  Put a %> Put b = Put $ \bs -> a bs `B.append` b bs
 
 -- | Serialize some value, given a Put action.
 serialize :: Put a -> a -> ByteString
