@@ -28,7 +28,7 @@ type Serialize a = forall s. Serializes s => s a
 
 -- | A class for things that have one canonical representation using 'Serialize'.
 class Binary b where
-  binary :: Serializes s => s b
+  binary :: Serialize b
 
 instance Binary Word8 where
   binary = bytes 1 %% \fn w8 -> B.head <$> fn (B.singleton w8)
@@ -36,8 +36,8 @@ instance Binary Word8 where
 -- | A class for things that have two representations using 'Serialize'
 -- -- one little-endian and one big-endian.
 class Endian b where
-  little :: Serializes s => s b
-  big    :: Serializes s => s b
+  little :: Serialize b
+  big    :: Serialize b
 
 instance Endian Word16 where
   little = binary %% byteAt 0 %> binary %% byteAt 1
