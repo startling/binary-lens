@@ -30,11 +30,11 @@ byte = bytes 1 %% \fn w8 -> B.head <$> fn (B.singleton w8)
 
 -- | Interact with a 'Word16' encoded little-endian.
 word16le :: Serialize s => s Word16
-word16le = byte %% byteAt 1 %> byte %% byteAt 0
+word16le = byte %% byteAt 0 %> byte %% byteAt 1
 
 -- | Interact with a 'Word16' encoded big-endian.
 word16be :: Serialize s => s Word16
-word16be = byte %% byteAt 0 %> byte %% byteAt 1
+word16be = byte %% byteAt 1 %> byte %% byteAt 0
 
 -- | Interact with a 'Word32' encoded little-endian.
 word32le :: Serialize s => s Word32
