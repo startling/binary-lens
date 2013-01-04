@@ -19,12 +19,12 @@ import Test.QuickCheck
 import Test.Hspec
 
 testPutGet :: (Arbitrary a, Default a, Eq a, Show a)
-  => Serialize a -> Int -> Spec
-testPutGet action size = do
+  => Serialize a -> Spec
+testPutGet action = do
   it "can serialize and deserialize to get the same value" . property $
     \v -> deserialize action (serialize action v) == Just v
   it "can be deserialized from and serialize to the same bytestring"
-    . property $ (B.pack <$> vectorOf size arbitrary) <&>
+    . property $ (B.pack <$> vectorOf (fromIntegral $ sizeOf action) arbitrary) <&>
       \bs -> (serialize action <$> deserialize action bs) == Just bs
 
 -- | Check that something parses to the given thing.
@@ -38,7 +38,7 @@ testByte = describe "binary :: Serialize Word8" $ let
   it "parses single bytes" $ do
     B.singleton 255 `shouldParseTo` 255
     B.singleton 123 `shouldParseTo` 123
-  testPutGet (binary :: Serialize Word8) 1
+  testPutGet (binary :: Serialize Word8)
 
 testWord16le :: Spec
 testWord16le = describe "little :: Serialize Word16" $ let
@@ -47,7 +47,7 @@ testWord16le = describe "little :: Serialize Word16" $ let
     B.pack [0xff, 0xff] `shouldParseTo` 0xffff
   it "deals with endianity correctly" $ do
     B.pack [0xe8, 0x03] `shouldParseTo` 0x03e8
-  testPutGet (little :: Serialize Word16) 2
+  testPutGet (little :: Serialize Word16)
 
 testWord16be :: Spec
 testWord16be = describe "big :: Serialize Word16" $ let
@@ -56,7 +56,7 @@ testWord16be = describe "big :: Serialize Word16" $ let
     B.pack [0xff, 0xff] `shouldParseTo` 0xffff
   it "deals with endianity correctly" $ do
     B.pack [0x03, 0xe8] `shouldParseTo` 0x03e8
-  testPutGet (big :: Serialize Word16) 2
+  testPutGet (big :: Serialize Word16)
 
 testWord32le :: Spec
 testWord32le = describe "little :: Serialize Word32" $ let
@@ -65,7 +65,7 @@ testWord32le = describe "little :: Serialize Word32" $ let
     B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
   it "deals with endianity correctly" $ do
     B.pack [0x03, 0xe8, 0x03, 0xe8] `shouldParseTo` 0xe803e803
-  testPutGet (little :: Serialize Word32) 4
+  testPutGet (little :: Serialize Word32)
 
 testWord32be :: Spec
 testWord32be = describe "big :: Serialize Word32" $ let
@@ -74,7 +74,7 @@ testWord32be = describe "big :: Serialize Word32" $ let
     B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
   it "deals with endianity correctly" $ do
     B.pack [0xe8, 0x03, 0xe8, 0x03] `shouldParseTo` 0xe803e803
-  testPutGet (big :: Serialize Word32) 4
+  testPutGet (big :: Serialize Word32)
 
 testWord64le :: Spec
 testWord64le = describe "little :: Serialize Word64" $ let
@@ -85,7 +85,7 @@ testWord64le = describe "little :: Serialize Word64" $ let
   it "deals with endianity correctly" $ do
     B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
       `shouldParseTo` 0xffeeddccbbaa9988
-  testPutGet (little :: Serialize Word64) 8
+  testPutGet (little :: Serialize Word64)
 
 testWord64be :: Spec
 testWord64be = describe "big :: Serialize Word64" $ let
@@ -96,7 +96,7 @@ testWord64be = describe "big :: Serialize Word64" $ let
   it "deals with endianity correctly" $ do
     B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
       `shouldParseTo` 0x8899aabbccddeeff
-  testPutGet (big :: Serialize Word64) 8
+  testPutGet (big :: Serialize Word64)
 
 main :: IO ()
 main = hspec $ do
