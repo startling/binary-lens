@@ -14,7 +14,7 @@ import Data.Bits.Lens
 import Data.Default
 
 -- | A class for serializing and deserializing values by way of lenses.
-class Serialize b where
+class Serializes b where
   -- | Apply a lens to an action.
   (%%)  :: b a -> Simple Lens s a -> b s
   -- | Sequence two similarly-typed actions.
@@ -26,7 +26,7 @@ infixl 4 %>
 
 -- | A class for things that have one canonical representation using 'Serialize'.
 class Binary b where
-  binary :: Serialize s => s b
+  binary :: Serializes s => s b
 
 instance Binary Word8 where
   binary = bytes 1 %% \fn w8 -> B.head <$> fn (B.singleton w8)
@@ -34,8 +34,8 @@ instance Binary Word8 where
 -- | A class for things that have two representations using 'Serialize'
 -- -- one little-endian and one big-endian.
 class Endian b where
-  little :: Serialize s => s b
-  big    :: Serialize s => s b
+  little :: Serializes s => s b
+  big    :: Serializes s => s b
 
 instance Endian Word16 where
   little = binary %% byteAt 0 %> binary %% byteAt 1

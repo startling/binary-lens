@@ -10,7 +10,7 @@ import Control.Lens.Binary.Serialize
 -- | Build a bytestring from some 'Serialize'.
 newtype Put r = Put (r -> ByteString)
 
-instance Serialize Put where
+instance Serializes Put where
   bytes i = Put $ B.take i
   Put b %% l= Put $ b . view l
   Put a %> Put b = Put $ \bs -> a bs `B.append` b bs

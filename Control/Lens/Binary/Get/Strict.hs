@@ -14,7 +14,7 @@ import Control.Lens.Binary.Serialize
 -- | Parse a bytestring into some kind of 'Serialize'.
 newtype Get r = Get (ByteString -> r -> Maybe (ByteString, r))
 
-instance Serialize Get where
+instance Serializes Get where
   bytes i = Get $ \bs _ -> if B.length bs < i then Nothing else
     Just (B.drop i bs, B.take i bs)
   Get b %% l = Get $ \bs r -> b bs (view l r) >>=
