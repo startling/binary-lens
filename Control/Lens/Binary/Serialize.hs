@@ -48,14 +48,14 @@ word32be = byte %% byteAt 3 %> byte %% byteAt 2
 
 -- | Interact with a 'Word64' encoded little-endian.
 word64le :: Serialize s => s Word64
-word64le = byte %% byteAt 7 %> byte %% byteAt 6
-  %> byte %% byteAt 5 %> byte %% byteAt 4
-  %> byte %% byteAt 3 %> byte %% byteAt 2
-  %> byte %% byteAt 1 %> byte %% byteAt 0
-
--- | Interact with a 'Word64' encoded big-endian.
-word64be :: Serialize s => s Word64
-word64be = byte %% byteAt 0 %> byte %% byteAt 1
+word64le = byte %% byteAt 0 %> byte %% byteAt 1
   %> byte %% byteAt 2 %> byte %% byteAt 3
   %> byte %% byteAt 4 %> byte %% byteAt 5
   %> byte %% byteAt 6 %> byte %% byteAt 7
+
+-- | Interact with a 'Word64' encoded big-endian.
+word64be :: Serialize s => s Word64
+word64be = byte %% byteAt 7 %> byte %% byteAt 6
+  %> byte %% byteAt 5 %> byte %% byteAt 4
+  %> byte %% byteAt 3 %> byte %% byteAt 2
+  %> byte %% byteAt 1 %> byte %% byteAt 0
