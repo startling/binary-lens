@@ -24,38 +24,35 @@ class Serialize b where
 
 infixl 4 %>
 
--- | Interact with a single byte.
-byte :: Serialize s => s Word8
-byte = bytes 1 %% \fn w8 -> B.head <$> fn (B.singleton w8)
+-- | A class for things that have one canonical representation using 'Serialize'.
+class Binary b where
+  binary :: Serialize s => s b
 
--- | Interact with a 'Word16' encoded little-endian.
-word16le :: Serialize s => s Word16
-word16le = byte %% byteAt 0 %> byte %% byteAt 1
+instance Binary Word8 where
+  binary = bytes 1 %% \fn w8 -> B.head <$> fn (B.singleton w8)
 
--- | Interact with a 'Word16' encoded big-endian.
-word16be :: Serialize s => s Word16
-word16be = byte %% byteAt 1 %> byte %% byteAt 0
+-- | A class for things that have two representations using 'Serialize'
+-- -- one little-endian and one big-endian.
+class Endian b where
+  little :: Serialize s => s b
+  big    :: Serialize s => s b
 
--- | Interact with a 'Word32' encoded little-endian.
-word32le :: Serialize s => s Word32
-word32le = byte %% byteAt 0 %> byte %% byteAt 1
-  %> byte %% byteAt 2 %> byte %% byteAt 3
+instance Endian Word16 where
+  little = binary %% byteAt 0 %> binary %% byteAt 1
+  big = binary %% byteAt 1 %> binary %% byteAt 0
 
--- | Interact with a 'Word32' encoded big-endian.
-word32be :: Serialize s => s Word32
-word32be = byte %% byteAt 3 %> byte %% byteAt 2
-  %> byte %% byteAt 1 %> byte %% byteAt 0
+instance Endian Word32 where
+  little = binary %% byteAt 0 %> binary %% byteAt 1
+    %> binary %% byteAt 2 %> binary %% byteAt 3
+  big = binary %% byteAt 3 %> binary %% byteAt 2
+    %> binary %% byteAt 1 %> binary %% byteAt 0
 
--- | Interact with a 'Word64' encoded little-endian.
-word64le :: Serialize s => s Word64
-word64le = byte %% byteAt 0 %> byte %% byteAt 1
-  %> byte %% byteAt 2 %> byte %% byteAt 3
-  %> byte %% byteAt 4 %> byte %% byteAt 5
-  %> byte %% byteAt 6 %> byte %% byteAt 7
-
--- | Interact with a 'Word64' encoded big-endian.
-word64be :: Serialize s => s Word64
-word64be = byte %% byteAt 7 %> byte %% byteAt 6
-  %> byte %% byteAt 5 %> byte %% byteAt 4
-  %> byte %% byteAt 3 %> byte %% byteAt 2
-  %> byte %% byteAt 1 %> byte %% byteAt 0
+instance Endian Word64 where
+  little = binary %% byteAt 0 %> binary %% byteAt 1
+    %> binary %% byteAt 2 %> binary %% byteAt 3
+    %> binary %% byteAt 4 %> binary %% byteAt 5
+    %> binary %% byteAt 6 %> binary %% byteAt 7
+  big = binary %% byteAt 7 %> binary %% byteAt 6
+    %> binary %% byteAt 5 %> binary %% byteAt 4
+    %> binary %% byteAt 3 %> binary %% byteAt 2
+    %> binary %% byteAt 1 %> binary %% byteAt 0
