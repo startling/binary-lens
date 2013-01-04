@@ -38,13 +38,13 @@ word16be = byte %% byteAt 1 %> byte %% byteAt 0
 
 -- | Interact with a 'Word32' encoded little-endian.
 word32le :: Serialize s => s Word32
-word32le = byte %% byteAt 3 %> byte %% byteAt 2
-  %> byte %% byteAt 1 %> byte %% byteAt 0
+word32le = byte %% byteAt 0 %> byte %% byteAt 1
+  %> byte %% byteAt 2 %> byte %% byteAt 3
 
 -- | Interact with a 'Word32' encoded big-endian.
 word32be :: Serialize s => s Word32
-word32be = byte %% byteAt 0 %> byte %% byteAt 1
-  %> byte %% byteAt 2 %> byte %% byteAt 3
+word32be = byte %% byteAt 3 %> byte %% byteAt 2
+  %> byte %% byteAt 1 %> byte %% byteAt 0
 
 -- | Interact with a 'Word64' encoded little-endian.
 word64le :: Serialize s => s Word64
