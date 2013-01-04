@@ -63,7 +63,19 @@ main = hspec $ do
       B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
     it "deals with endianity correctly" $ do
       B.pack [0xe8, 0x03, 0xe8, 0x03] `shouldParseTo` 0xe803e803
-  describe "word64le" $ do
+  describe "word64le" $ let ?action = word64le in do
+    it "parses eight bytes" $ do
+      B.pack [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
+        `shouldParseTo` 0xffffffffffffffff
+    it "deals with endianity correctly" $ do
+      B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
+        `shouldParseTo` 0xffeeddccbbaa9988
     testPutGet word64le 8
-  describe "word64be" $ do
+  describe "word64be" $ let ?action = word64be in do
+    it "parses eight bytes" $ do
+      B.pack [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
+        `shouldParseTo` 0xffffffffffffffff
+    it "deals with endianity correctly" $ do
+      B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
+        `shouldParseTo` 0x8899aabbccddeeff
     testPutGet word64be 8
