@@ -51,10 +51,18 @@ main = hspec $ do
     it "deals with endianity correctly" $ do
       B.pack [0x03, 0xe8] `shouldParseTo` 0x03e8
     testPutGet word16be 2
-  describe "word32le" $ do
+  describe "word32le" $ let ?action = word32le in do
     testPutGet word32le 4
-  describe "word32be" $ do
+    it "parses four bytes" $ do
+      B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
+    it "deals with endianity correctly" $ do
+      B.pack [0x03, 0xe8, 0x03, 0xe8] `shouldParseTo` 0xe803e803
+  describe "word32be" $ let ?action = word32be in do
     testPutGet word32be 4
+    it "parses four bytes" $ do
+      B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
+    it "deals with endianity correctly" $ do
+      B.pack [0xe8, 0x03, 0xe8, 0x03] `shouldParseTo` 0xe803e803
   describe "word64le" $ do
     testPutGet word64le 8
   describe "word64be" $ do
