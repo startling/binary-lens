@@ -1,6 +1,5 @@
 {-# Language Rank2Types #-}
 {-# Language ImplicitParams #-}
-{-# Language NoMonomorphismRestriction #-}
 module Main where
 -- base
 import Data.Word
@@ -20,7 +19,7 @@ import Test.QuickCheck
 import Test.Hspec
 
 testPutGet :: (Arbitrary a, Default a, Eq a, Show a)
-  => (forall s. Serialize s => s a) -> Int -> Spec
+  => Serialize a -> Int -> Spec
 testPutGet action size = do
   it "can serialize and deserialize to get the same value" . property $
     \v -> deserialize action (serialize action v) == Just v
@@ -34,63 +33,70 @@ shouldParseTo :: (?action :: Get b, Eq b, Show b, Default b)
 a `shouldParseTo` b = deserialize ?action a `shouldBe` Just b
 
 testByte :: Spec
-testByte = describe "byte" $ let ?action = byte in do
+testByte = describe "binary :: Serialize Word8" $ let
+  ?action = binary :: Serialize Word8 in do
   it "parses single bytes" $ do
     B.singleton 255 `shouldParseTo` 255
     B.singleton 123 `shouldParseTo` 123
-  testPutGet byte 1
+  testPutGet (binary :: Serialize Word8) 1
 
 testWord16le :: Spec
-testWord16le = describe "word16le" $ let ?action = word16le in do
+testWord16le = describe "little :: Serialize Word16" $ let
+  ?action = little :: Serialize Word16  in do
   it "parses pairs of bytes" $ do
     B.pack [0xff, 0xff] `shouldParseTo` 0xffff
   it "deals with endianity correctly" $ do
     B.pack [0xe8, 0x03] `shouldParseTo` 0x03e8
-  testPutGet word16le 2
+  testPutGet (little :: Serialize Word16) 2
 
 testWord16be :: Spec
-testWord16be = describe "word16be" $ let ?action = word16be in do
+testWord16be = describe "big :: Serialize Word16" $ let
+  ?action = big :: Serialize Word16 in do
   it "parses pairs of bytes" $ do
     B.pack [0xff, 0xff] `shouldParseTo` 0xffff
   it "deals with endianity correctly" $ do
     B.pack [0x03, 0xe8] `shouldParseTo` 0x03e8
-  testPutGet word16be 2
+  testPutGet (big :: Serialize Word16) 2
 
 testWord32le :: Spec
-testWord32le = describe "word32le" $ let ?action = word32le in do
-  testPutGet word32le 4
+testWord32le = describe "little :: Serialize Word32" $ let
+  ?action = little :: Serialize Word32 in do
   it "parses four bytes" $ do
     B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
   it "deals with endianity correctly" $ do
     B.pack [0x03, 0xe8, 0x03, 0xe8] `shouldParseTo` 0xe803e803
+  testPutGet (little :: Serialize Word32) 4
 
 testWord32be :: Spec
-testWord32be = describe "word32be" $ let ?action = word32be in do
-  testPutGet word32be 4
+testWord32be = describe "big :: Serialize Word32" $ let
+  ?action = big :: Serialize Word32 in do
   it "parses four bytes" $ do
     B.pack [0xff, 0xff, 0xff, 0xff] `shouldParseTo` 0xffffffff
   it "deals with endianity correctly" $ do
     B.pack [0xe8, 0x03, 0xe8, 0x03] `shouldParseTo` 0xe803e803
+  testPutGet (big :: Serialize Word32) 4
 
 testWord64le :: Spec
-testWord64le = describe "word64le" $ let ?action = word64le in do
+testWord64le = describe "little :: Serialize Word64" $ let
+  ?action = little :: Serialize Word64 in do
   it "parses eight bytes" $ do
     B.pack [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
       `shouldParseTo` 0xffffffffffffffff
   it "deals with endianity correctly" $ do
     B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
       `shouldParseTo` 0xffeeddccbbaa9988
-  testPutGet word64le 8
+  testPutGet (little :: Serialize Word64) 8
 
 testWord64be :: Spec
-testWord64be = describe "word64be" $ let ?action = word64be in do
+testWord64be = describe "big :: Serialize Word64" $ let
+  ?action = big :: Serialize Word64 in do
   it "parses eight bytes" $ do
     B.pack [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
       `shouldParseTo` 0xffffffffffffffff
   it "deals with endianity correctly" $ do
     B.pack [0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
       `shouldParseTo` 0x8899aabbccddeeff
-  testPutGet word64be 8
+  testPutGet (big :: Serialize Word64) 8
 
 main :: IO ()
 main = hspec $ do
