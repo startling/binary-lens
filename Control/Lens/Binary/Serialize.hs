@@ -24,6 +24,8 @@ class Serializes b where
 
 infixl 4 %>
 
+type Serialize a = forall s. Serializes s => s a
+
 -- | A class for things that have one canonical representation using 'Serialize'.
 class Binary b where
   binary :: Serializes s => s b
