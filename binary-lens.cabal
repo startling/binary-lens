@@ -1,0 +1,28 @@
+Name: binary-lens
+Version: 0
+Cabal-Version: >= 1.8
+Build-Type: Simple
+Library
+  exposed-modules:
+      Control.Lens.Binary
+    , Control.Lens.Binary.Serialize
+    , Control.Lens.Binary.Get
+    , Control.Lens.Binary.Get.Strict
+    , Control.Lens.Binary.Put
+    , Control.Lens.Binary.Put.Strict
+    , Control.Lens.Binary.Size
+  build-depends:
+      base >= 4 && < 5
+    , lens >= 3.8
+    , bytestring >= 0.9.2.0
+    , data-default >= 0.5.0
+Test-Suite test-binary-lens
+  type: exitcode-stdio-1.0
+  main-is: test.hs
+  build-depends:
+      base >= 4 && < 5
+    , lens >= 3.8
+    , bytestring >= 0.9.2.0
+    , data-default >= 0.5.0
+    , hspec >= 1.4.3
+    , QuickCheck >= 2.5.1.1
