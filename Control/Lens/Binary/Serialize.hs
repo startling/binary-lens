@@ -58,3 +58,38 @@ instance Endian Word64 where
     %> binary %% byteAt 5 %> binary %% byteAt 4
     %> binary %% byteAt 3 %> binary %% byteAt 2
     %> binary %% byteAt 1 %> binary %% byteAt 0
+
+instance (Binary a, Binary b) => Binary (a, b) where
+  binary = binary %% _1 %> binary %% _2
+
+instance (Binary a, Binary b, Binary c)
+  => Binary (a, b, c) where
+  binary = binary %% _1
+    %> binary %% _2
+    %> binary %% _3
+
+instance (Binary a, Binary b, Binary c, Binary d)
+  => Binary (a, b, c, d) where
+  binary = binary %% _1
+    %> binary %% _2
+    %> binary %% _3
+    %> binary %% _4
+
+instance (Endian a, Endian b) => Endian (a, b) where
+  little = little %% _1 %> little %% _2
+  big = big %% _1 %> big %% _2
+
+instance (Endian a, Endian b, Endian c)
+  => Endian (a, b, c) where
+  little = little %% _1
+    %> little %% _2
+    %> little %% _3
+  big = big %% _1 %> big %% _2 %> big %% _3
+
+instance (Endian a, Endian b, Endian c, Endian d)
+  => Endian (a, b, c, d) where
+  little = little %% _1
+    %> little %% _2
+    %> little %% _3
+    %> little %% _4
+  big = big %% _1 %> big %% _2 %> big %% _3 %> big %% _4
