@@ -115,6 +115,36 @@ testTuples = do
     it "has a size of 4" $ do
       sizeOf (binary :: Serialize (Word8, Word8, Word8, Word8))
        `shouldBe` 4
+  describe "little :: Serialize (Word16, Word16)" $ do
+    testPutGet (little :: Serialize (Word16, Word16))
+    it "has a size of 4" $ do
+      sizeOf (little :: Serialize (Word16, Word16))
+        `shouldBe` 4
+  describe "big :: Serialize (Word16, Word16)" $ do
+    testPutGet (big :: Serialize (Word16, Word16))
+    it "has a size of 4" $ do
+      sizeOf (big :: Serialize (Word16, Word16))
+        `shouldBe` 4
+  describe "little :: Serialize (Word16, Word16, Word16)" $ do
+    testPutGet (little :: Serialize (Word16, Word16, Word16))
+    it "has a size of 6" $ do
+      sizeOf (little :: Serialize (Word16, Word16, Word16))
+       `shouldBe` 6
+  describe "big :: Serialize (Word16, Word16, Word16)" $ do
+    testPutGet (big :: Serialize (Word16, Word16, Word16))
+    it "has a size of 6" $ do
+      sizeOf (big :: Serialize (Word16, Word16, Word16))
+       `shouldBe` 6
+  describe "little :: Serialize (Word16, Word16, Word16, Word16)" $ do
+    testPutGet (little :: Serialize (Word16, Word16, Word16, Word16))
+    it "has a size of 8" $ do
+      sizeOf (little :: Serialize (Word16, Word16, Word16, Word16))
+       `shouldBe` 8
+  describe "big :: Serialize (Word16, Word16, Word16, Word16)" $ do
+    testPutGet (big :: Serialize (Word16, Word16, Word16, Word16))
+    it "has a size of 8" $ do
+      sizeOf (big :: Serialize (Word16, Word16, Word16, Word16))
+       `shouldBe` 8
 
 main :: IO ()
 main = hspec $ do
