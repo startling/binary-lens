@@ -98,6 +98,24 @@ testWord64be = describe "big :: Serialize Word64" $ let
       `shouldParseTo` 0x8899aabbccddeeff
   testPutGet (big :: Serialize Word64)
 
+testTuples :: Spec
+testTuples = do
+  describe "binary :: Serialize (Word8, Word8)" $ do
+    testPutGet (binary :: Serialize (Word8, Word8))
+    it "has a size of 2" $ do
+      sizeOf (binary :: Serialize (Word8, Word8))
+        `shouldBe` 2
+  describe "binary :: Serialize (Word8, Word8, Word8)" $ do
+    testPutGet (binary :: Serialize (Word8, Word8, Word8))
+    it "has a size of 3" $ do
+      sizeOf (binary :: Serialize (Word8, Word8, Word8))
+       `shouldBe` 3
+  describe "binary :: Serialize (Word8, Word8, Word8, Word8)" $ do
+    testPutGet (binary :: Serialize (Word8, Word8, Word8, Word8))
+    it "has a size of 4" $ do
+      sizeOf (binary :: Serialize (Word8, Word8, Word8, Word8))
+       `shouldBe` 4
+
 main :: IO ()
 main = hspec $ do
   testByte
@@ -107,3 +125,4 @@ main = hspec $ do
   testWord32be
   testWord64le
   testWord64be
+  testTuples
