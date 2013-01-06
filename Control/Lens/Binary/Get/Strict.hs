@@ -12,18 +12,18 @@ import Data.Default
 import Control.Lens.Binary.Serialize
 
 -- | Parse a bytestring into some kind of 'Serialize'.
-newtype Get r = Get (ByteString -> r -> Maybe (ByteString, r))
+newtype Get r = Get (r -> ByteString -> Maybe (r, ByteString))
 
 instance Serializes Get where
-  bytes i = Get $ \bs _ -> if B.length bs < i then Nothing else
-    Just (B.drop i bs, B.take i bs)
-  Get b %% l = Get $ \bs r -> b bs (view l r) >>=
-    \(bs, new) -> return (bs, set l new r)
-  Get a %> Get b = Get $ \bs r -> a bs r >>= uncurry b
+  bytes i = Get $ \_ bs -> if B.length bs < i then Nothing else
+    Just (B.take i bs, B.drop i bs)
+  Get b %% l = Get $ \r bs -> b (view l r) bs >>=
+    \(new, bs) -> return (set l new r, bs)
+  Get a %> Get b = Get $ \r bs -> a r bs >>= uncurry b
 
 -- | Deserialize a value, given the value to start with.
 deserialize' :: Get b -> b -> ByteString -> Maybe b
-deserialize' (Get a) x bs = snd <$> a bs x
+deserialize' (Get a) x bs = fst <$> a x bs
 
 -- | Deserialize a value, starting with the default value of its type.
 deserialize :: Default b => Get b -> ByteString -> Maybe b
